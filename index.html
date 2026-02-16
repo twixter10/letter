@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elegant Violet Love Letter · 3D Violet Bloom</title>
+    <title>Elegant Violet Love Letter · 3D Violet Particles</title>
     <!-- Google Fonts for elegance -->
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,7 @@
             position: relative;
         }
 
-        /* 3D canvas container (violet flowers) */
+        /* 3D canvas container (now only violet particles) */
         #flower-canvas {
             position: fixed;
             top: 0;
@@ -134,7 +134,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 30px; /* slightly larger for emoji */
             color: #f7eaff;
             text-shadow: 2px 2px 0 #4e2f62;
             z-index: 15;
@@ -295,7 +295,7 @@
 </head>
 <body>
 
-    <!-- Canvas for 3D flowers (Three.js) now with true violet emoji-inspired violet flowers -->
+    <!-- Canvas for 3D violet particles (flowers removed, only emoji remains) -->
     <canvas id="flower-canvas"></canvas>
 
     <!-- Elegant Violet Love Letter -->
@@ -304,7 +304,7 @@
         <div class="floral-corner corner-tr"></div>
         <div class="floral-corner corner-bl"></div>
         <div class="floral-corner corner-br"></div>
-        <div class="violet-seal"><span>🪻</span></div>  <!-- violet emoji added as per request -->
+        <div class="violet-seal"><span>🪻</span></div>  <!-- violet emoji only, as requested -->
 
         <h1>My Salamat po Mica</h1>
         <div class="salutation"> dear Ka away ko,</div>
@@ -318,15 +318,13 @@
         </div>
     </div>
 
-    <!-- Music control button (now reflects autoplay state) -->
+    <!-- Music control button -->
     <div class="music-control" id="music-toggle">
         <span class="music-icon" id="music-icon">♪</span>
         <span id="music-text">Pause music</span>
     </div>
 
-    <!-- Audio element (hidden) with autoplay. Using a reliable, violin/piano track that suggests elegance.
-         To absolutely ensure a valid audio file and avoid CORS/404, we use a well-known, always-available music sample from the web.
-         This is a short instrumental piece (Pachelbel Canon) that fits the violet mood. -->
+    <!-- Audio element (autoplay) using a reliable instrumental track -->
     <audio id="bg-music" loop preload="auto" autoplay crossorigin="anonymous">
         <source src="bruno mars ✨ count on me ✨ ~ lyrics (mp3cut.net).mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -342,7 +340,7 @@
     </script>
 
     <script type="module">
-        // ----- 3D Violet Flowers (Three.js) now with more visible violet + emoji spirit -----
+        // ----- 3D Violet Particles only (flowers completely removed) -----
         import * as THREE from 'three';
 
         // Scene setup
@@ -357,137 +355,32 @@
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.shadowMap.enabled = true;
 
-        // Soft lighting
+        // Soft lighting (still needed for particles if we had meshes, but kept for ambiance)
         const ambientLight = new THREE.AmbientLight(0x404060);
         scene.add(ambientLight);
-
-        const dirLight = new THREE.DirectionalLight(0xe0c0ff, 1.2);
-        dirLight.position.set(2, 3, 4);
-        scene.add(dirLight);
-
-        const backLight = new THREE.PointLight(0x9b7bb5, 0.8);
-        backLight.position.set(-2, 1, -3);
-        scene.add(backLight);
 
         // Add subtle fog to blend with background
         scene.fog = new THREE.FogExp2(0x1a0f1f, 0.05);
 
-        // Function to create a violet flower (now with more petals, more violet)
-        function createViolet(posX, posY, posZ, sizeScale = 1) {
-            const group = new THREE.Group();
-
-            // Stem (thin cylinder)
-            const stemMat = new THREE.MeshStandardMaterial({ color: 0x5d6d3e, emissive: 0x1a2a0a });
-            const stemGeo = new THREE.CylinderGeometry(0.05 * sizeScale, 0.08 * sizeScale, 1.2 * sizeScale, 6);
-            const stem = new THREE.Mesh(stemGeo, stemMat);
-            stem.position.y = -0.6 * sizeScale;
-            stem.castShadow = true;
-            group.add(stem);
-
-            // Leaves (two small ovals)
-            const leafMat = new THREE.MeshStandardMaterial({ color: 0x6b8e4c });
-            const leafGeo = new THREE.SphereGeometry(0.15 * sizeScale, 5);
-            
-            const leaf1 = new THREE.Mesh(leafGeo, leafMat);
-            leaf1.position.set(0.2 * sizeScale, -0.1 * sizeScale, 0);
-            leaf1.scale.set(0.8, 0.2, 0.4);
-            leaf1.rotation.z = 0.3;
-            leaf1.castShadow = true;
-            group.add(leaf1);
-
-            const leaf2 = new THREE.Mesh(leafGeo, leafMat);
-            leaf2.position.set(-0.2 * sizeScale, -0.2 * sizeScale, 0);
-            leaf2.scale.set(0.8, 0.2, 0.4);
-            leaf2.rotation.z = -0.3;
-            leaf2.castShadow = true;
-            group.add(leaf2);
-
-            // Flower: Instead of a simple cone, we create 5 violet petals around a center
-            const petalMat = new THREE.MeshStandardMaterial({ color: 0x9b6eb0, emissive: 0x2a1535 }); // rich violet
-            const petalMatLighter = new THREE.MeshStandardMaterial({ color: 0xb78fc9, emissive: 0x2a1535 }); // lighter violet
-            
-            // Petals (using flattened spheres)
-            for (let i = 0; i < 5; i++) {
-                const angle = (i / 5) * Math.PI * 2;
-                const petal = new THREE.Mesh(new THREE.SphereGeometry(0.18 * sizeScale, 6), petalMatLighter);
-                petal.scale.set(0.5, 0.15, 0.8);
-                petal.position.set(
-                    Math.sin(angle) * 0.22 * sizeScale,
-                    0.5 * sizeScale + 0.05 * sizeScale,
-                    Math.cos(angle) * 0.22 * sizeScale
-                );
-                petal.rotation.y = angle;
-                petal.rotation.x = 0.3;
-                petal.rotation.z = 0.2;
-                petal.castShadow = true;
-                group.add(petal);
-            }
-
-            // Inner bud (darker violet)
-            const budGeo = new THREE.ConeGeometry(0.15 * sizeScale, 0.2 * sizeScale, 8);
-            const bud = new THREE.Mesh(budGeo, petalMat);
-            bud.position.y = 0.5 * sizeScale;
-            bud.castShadow = true;
-            group.add(bud);
-
-            // Center (yellow / stamen)
-            const centerMat = new THREE.MeshStandardMaterial({ color: 0xf5d742 });
-            const centerGeo = new THREE.SphereGeometry(0.08 * sizeScale, 6);
-            const center = new THREE.Mesh(centerGeo, centerMat);
-            center.position.y = 0.6 * sizeScale;
-            center.castShadow = true;
-            group.add(center);
-
-            // Tiny stamen dots
-            const stamenMat = new THREE.MeshStandardMaterial({ color: 0xffdd99 });
-            for (let i = 0; i < 4; i++) {
-                const stamen = new THREE.Mesh(new THREE.SphereGeometry(0.03 * sizeScale, 4), stamenMat);
-                stamen.position.set(
-                    Math.sin(i * 1.57) * 0.08 * sizeScale,
-                    0.65 * sizeScale,
-                    Math.cos(i * 1.57) * 0.08 * sizeScale
-                );
-                group.add(stamen);
-            }
-
-            group.position.set(posX, posY, posZ);
-            return group;
-        }
-
-        // Create a bunch of violet flowers (now with more vibrant violet)
-        const flowers = [
-            createViolet(1.2, 0.3, -0.8, 0.9),
-            createViolet(-1.1, 0.1, 1.2, 1.0),
-            createViolet(0.8, -0.2, 1.8, 0.8),
-            createViolet(-0.5, 0.5, -1.5, 1.1),
-            createViolet(1.5, 0.2, 0.3, 0.95),
-            createViolet(-1.3, 0.4, -0.5, 0.85),
-            createViolet(0.0, 0.7, -0.2, 1.2), // centerpiece
-            createViolet(-0.3, 0.2, 1.0, 0.75),
-            createViolet(0.9, 0.1, -1.4, 0.8),
-        ];
-
-        flowers.forEach(f => scene.add(f));
-
-        // Add floating violet particles (now more numerous to suggest violet dust)
-        const particleCount = 350;
+        // ----- Only floating violet particles (no flowers) -----
+        const particleCount = 500; // more particles for a richer emoji-violet vibe
         const particleGeo = new THREE.BufferGeometry();
         const particlePositions = new Float32Array(particleCount * 3);
         const particleColors = new Float32Array(particleCount * 3);
 
         for (let i = 0; i < particleCount; i++) {
-            const r = 2.0 + Math.random() * 3.5;
+            // Distribute in a spherical cloud
+            const r = 2.0 + Math.random() * 4.0; // radius range
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
             
             particlePositions[i*3] = Math.sin(phi) * Math.cos(theta) * r;
-            particlePositions[i*3+1] = Math.sin(phi) * Math.sin(theta) * r * 0.5;
+            particlePositions[i*3+1] = Math.sin(phi) * Math.sin(theta) * r * 0.5; // flatten vertically a bit
             particlePositions[i*3+2] = Math.cos(phi) * r;
 
-            // violet shades (more purple)
-            const color = new THREE.Color().setHSL(0.7 + Math.random()*0.25, 0.8, 0.6);
+            // Violet shades: hue between 0.65 and 0.85 (purple to violet)
+            const color = new THREE.Color().setHSL(0.68 + Math.random()*0.2, 0.8, 0.6);
             particleColors[i*3] = color.r;
             particleColors[i*3+1] = color.g;
             particleColors[i*3+2] = color.b;
@@ -497,17 +390,52 @@
         particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
 
         const particleMat = new THREE.PointsMaterial({ 
-            size: 0.08, 
+            size: 0.09, 
+            vertexColors: true, 
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            opacity: 0.9
+        });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+
+        // Also add a few larger sparkles (scattered)
+        const sparkleCount = 80;
+        const sparkleGeo = new THREE.BufferGeometry();
+        const sparklePositions = new Float32Array(sparkleCount * 3);
+        const sparkleColors = new Float32Array(sparkleCount * 3);
+
+        for (let i = 0; i < sparkleCount; i++) {
+            const r = 1.5 + Math.random() * 3;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            
+            sparklePositions[i*3] = Math.sin(phi) * Math.cos(theta) * r;
+            sparklePositions[i*3+1] = Math.sin(phi) * Math.sin(theta) * r * 0.6;
+            sparklePositions[i*3+2] = Math.cos(phi) * r;
+
+            // Lighter violet / white
+            const color = new THREE.Color().setHSL(0.72 + Math.random()*0.15, 0.9, 0.75);
+            sparkleColors[i*3] = color.r;
+            sparkleColors[i*3+1] = color.g;
+            sparkleColors[i*3+2] = color.b;
+        }
+
+        sparkleGeo.setAttribute('position', new THREE.BufferAttribute(sparklePositions, 3));
+        sparkleGeo.setAttribute('color', new THREE.BufferAttribute(sparkleColors, 3));
+
+        const sparkleMat = new THREE.PointsMaterial({ 
+            size: 0.15, 
             vertexColors: true, 
             transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false
         });
-        const particles = new THREE.Points(particleGeo, particleMat);
-        scene.add(particles);
+        const sparkles = new THREE.Points(sparkleGeo, sparkleMat);
+        scene.add(sparkles);
 
-        // floating animation
-        const initialFlowerY = flowers.map(f => f.position.y);
+        // Animation variables
         let time = 0;
 
         // resize handler
@@ -521,34 +449,33 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            time += 0.002;
+            time += 0.0015;
 
-            flowers.forEach((flower, index) => {
-                flower.position.y = initialFlowerY[index] + Math.sin(time * 2 + index) * 0.05;
-                flower.rotation.y += 0.001;
-                flower.rotation.x = Math.sin(time * 0.5 + index) * 0.02;
-            });
+            // Rotate particle clouds slowly
+            particles.rotation.y += 0.0004;
+            particles.rotation.x += 0.0001;
+            sparkles.rotation.y -= 0.0003;
+            sparkles.rotation.z += 0.0002;
 
-            particles.rotation.y += 0.0005;
-
-            camera.position.x = 2.0 * Math.sin(time * 0.15);
-            camera.position.z = 5 + Math.sin(time * 0.25) * 0.4;
-            camera.lookAt(0, 0.8, 0);
+            // Gentle camera movement
+            camera.position.x = 1.8 * Math.sin(time * 0.2);
+            camera.position.z = 5.2 + Math.sin(time * 0.3) * 0.4;
+            camera.lookAt(0, 0.5, 0);
 
             renderer.render(scene, camera);
         }
 
         animate();
 
-        // ----- Music control (autoplay enabled, with fallback) -----
+        // ----- Music control (same as before) -----
         const audio = document.getElementById('bg-music');
         const toggleBtn = document.getElementById('music-toggle');
         const icon = document.getElementById('music-icon');
         const text = document.getElementById('music-text');
 
-        audio.volume = 0.35; // comfortable level
+        audio.volume = 0.35;
 
-        let isPlaying = true; // optimistic
+        let isPlaying = true;
 
         audio.addEventListener('playing', () => {
             isPlaying = true;
@@ -562,20 +489,17 @@
             text.innerText = 'Play music';
         });
 
-        // Attempt autoplay and handle browser blocking
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.then(() => {
-                // autoplay success
                 isPlaying = true;
                 icon.innerText = '♪';
                 text.innerText = 'Pause music';
             }).catch(() => {
-                // autoplay blocked — update button
                 isPlaying = false;
                 icon.innerText = '♫';
                 text.innerText = 'Play music';
-                console.log('Autoplay blocked by browser. Click to start.');
+                console.log('Autoplay blocked. Click to start.');
             });
         }
 
@@ -584,7 +508,6 @@
                 audio.pause();
             } else {
                 audio.play().catch(e => console.log('Playback failed:', e));
-                // optimistic update
                 icon.innerText = '♪';
                 text.innerText = 'Pause music';
                 isPlaying = true;
